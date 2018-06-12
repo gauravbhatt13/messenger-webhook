@@ -65,6 +65,13 @@ app.get('/webhook', (req, res) => {
     }
 });
 */
+app.post('/speech-webhook', function (req, res) {
+    // Get the city and date from the request
+    let number = req.body.queryResult.parameters['number-integer'];
+    res.json({ 'fulfillmentText': number });
+    //res.sendStatus(200)
+});
+
 app.post('/webhook', function (req, res) {
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
@@ -76,7 +83,7 @@ app.post('/webhook', function (req, res) {
         }
     }
     res.sendStatus(200)
-})
+});
 
 const token = "EAAV7ZCmOQmEABANF9YN3xKxVMgQa3JTIjC018c8ojUTCBFF2bT3cZCPheqrtGvuZBMFtTN0pQlOnWh0mmxBZAczMQAZCXA8HrYPYQFUvp95wZArKUva7rhJ8ODEWUCeTT1SdwSdqanwMBNUFqRP4dOt8MKaYLyK4CG2dZAYKdAEjQZDZD";
 
