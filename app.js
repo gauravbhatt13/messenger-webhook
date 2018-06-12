@@ -36,6 +36,7 @@ app.post('/webhook', (req, res) => {
 });
 
 // Adds support for GET requests to our webhook
+/*
 app.get('/webhook', (req, res) => {
 
     // Your verify token. Should be a random string.
@@ -62,3 +63,37 @@ app.get('/webhook', (req, res) => {
         }
     }
 });
+*/
+app.post('/webhook', function (req, res) {
+    let messaging_events = req.body.entry[0].messaging
+    for (let i = 0; i < messaging_events.length; i++) {
+        let event = req.body.entry[0].messaging[i]
+        let sender = event.sender.id
+        if (event.message && event.message.text) {
+            let text = event.message.text
+            sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+        }
+    }
+    res.sendStatus(200)
+})
+
+const token = "EAAV7ZCmOQmEABANF9YN3xKxVMgQa3JTIjC018c8ojUTCBFF2bT3cZCPheqrtGvuZBMFtTN0pQlOnWh0mmxBZAczMQAZCXA8HrYPYQFUvp95wZArKUva7rhJ8ODEWUCeTT1SdwSdqanwMBNUFqRP4dOt8MKaYLyK4CG2dZAYKdAEjQZDZD";
+
+function sendTextMessage(sender, text) {
+    let messageData = { text:text }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
