@@ -68,7 +68,7 @@ app.get('/webhook', (req, res) => {
 app.post('/speech-webhook', function (req, res) {
     // Get the city and date from the request
     let number = req.body.queryResult.parameters['number-integer'];
-    res.json({ 'fulfillmentText': number });
+    res.json({ 'fulfillmentText': 'your ticket number ' + number + ' is under processing'});
     //res.sendStatus(200)
 });
 
