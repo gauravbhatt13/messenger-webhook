@@ -65,12 +65,16 @@ function handleMessage(sender, message) {
     const greeting = firstEntity(message.nlp, 'greetings');
     const thanks = firstEntity(message.nlp, 'thanks');
     const bye = firstEntity(message.nlp, 'bye');
+    const newticket = firstEntity(message.nlp, 'newticket');
     if (greeting && greeting.confidence > 0.8) {
         sendTextMessage(sender, 'Hi there!');
+        sendTextMessage(sender, 'How may I help you today?');
     } else if (thanks && thanks.confidence > 0.8) {
         sendTextMessage(sender, 'You are welcome!');
     } else if (bye && bye.confidence > 0.8) {
         sendTextMessage(sender, 'See you again!');
+    } else if (newticket &&  newticket.confidence > 0.8) {
+        sendTextMessage(sender, 'Your ticket number is 12020');
     } else {
         sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
     }
