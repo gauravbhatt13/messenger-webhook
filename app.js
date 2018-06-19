@@ -5,7 +5,8 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
-    app = express().use(bodyParser.json()); // creates express http server
+    app = express().use(bodyParser.json()),
+    alexa = require('ask-sdk'); // creates express http server
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -70,6 +71,15 @@ app.post('/speech-webhook', function (req, res) {
     let number = req.body.queryResult.parameters['number-integer'];
     res.json({ 'fulfillmentText': 'your ticket number ' + number + ' is under processing'});
     //res.sendStatus(200)
+});
+
+app.post('/alexa-webhook', function (req, res) {
+    const speechText = "testing alexa";
+    return alexa.handlerInput.responseBuilder
+        .speak("your ticket number is 120")
+        .withSimpleCard('Hello World', speechText)
+        .getResponse();
+    };
 });
 
 app.post('/webhook', function (req, res) {
