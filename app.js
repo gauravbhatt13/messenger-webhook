@@ -8,8 +8,8 @@ const
     app = express().use(bodyParser.json())// creates express http server
 
 
-const facebook_token = "EAAV7ZCmOQmEABANF9YN3xKxVMgQa3JTIjC018c8ojUTCBFF2bT3cZCPheqrtGvuZBMFtTN0pQlOnWh0mmxBZAczMQAZCXA8HrYPYQFUvp95wZArKUva7rhJ8ODEWUCeTT1SdwSdqanwMBNUFqRP4dOt8MKaYLyK4CG2dZAYKdAEjQZDZD";
-
+//const facebook_token = "EAAV7ZCmOQmEABANF9YN3xKxVMgQa3JTIjC018c8ojUTCBFF2bT3cZCPheqrtGvuZBMFtTN0pQlOnWh0mmxBZAczMQAZCXA8HrYPYQFUvp95wZArKUva7rhJ8ODEWUCeTT1SdwSdqanwMBNUFqRP4dOt8MKaYLyK4CG2dZAYKdAEjQZDZD";
+const facebook_token = "EAADaw4BX5VsBAFNYwZA9uaYFRa5Byfz07NnXvS3DNxDMuHQ1DETgKueGyLNiUWUUoOELgwEVtxs7hcuz5H8YhrbEJQLceZAN98otesj8PsW5ZB85pvV5nqEJnJQuNex8tXZBYGNWS5mvLrYx41I7BQFXOHFImuuuOeA77VKrsAZDZD";
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -22,7 +22,25 @@ app.post('/speech-webhook', function (req, res) {
 });
 
 app.post('/webhook', function (req, res) {
-    let messaging_events = req.body.entry[0].messaging
+    let VERIFY_TOKEN = "hello-webhook";
+    let mode = req.query['hub.mode'];
+    let token = req.query['hub.verify_token'];
+    let challenge = req.query['hub.challenge'];
+    if (mode && token) {
+
+        // Checks the mode and token sent is correct
+        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+
+            // Responds with the challenge token from the request
+            console.log('WEBHOOK_VERIFIED');
+            res.status(200).send(challenge);
+
+        } else {
+            // Responds with '403 Forbidden' if verify tokens do not match
+            res.sendStatus(403);
+        }
+    };
+    /*let messaging_events = req.body.entry[0].messaging
     console.log('message received with events : ' + messaging_events.length);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
@@ -31,7 +49,7 @@ app.post('/webhook', function (req, res) {
         if (event.message && event.message.text) {
             handleMessage(sender, event.message, res);
         }
-    }
+    }*/
 });
 
 function firstEntity(nlp, name) {
