@@ -72,8 +72,14 @@ function firstEntity(nlp, name) {
 function handleMessage(sender, message, res) {
     // check greeting is here and is confident
     const greeting = firstEntity(message.nlp, 'greetings');
+    const thanks = firstEntity(message.nlp, 'thanks');
+    const bye = firstEntity(message.nlp, 'bye');
     if (greeting && greeting.confidence > 0.8) {
         sendTextMessage(sender, 'Hi there!', res);
+    } else if (thanks && thanks.confidence > 0.8) {
+        sendTextMessage(sender, 'You are welcome!', res);
+    } else if (bye && bye.confidence > 0.8) {
+        sendTextMessage(sender, 'See you again!', res);
     } else {
         sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200), res)
     }
