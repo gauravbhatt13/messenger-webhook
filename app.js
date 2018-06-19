@@ -21,7 +21,7 @@ app.post('/speech-webhook', function (req, res) {
     //res.sendStatus(200)
 });
 
-app.post('/webhook', function (req, res) {
+app.get('/webhook', function (req, res) {
     let VERIFY_TOKEN = "hello-webhook";
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
