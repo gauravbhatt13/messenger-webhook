@@ -23,31 +23,32 @@ app.post('/speech-webhook', function (req, res) {
 
 app.post('/webhook', function (req, res) {
     let messaging_events = req.body.entry[0].messaging
+    console.log('message received with events : ' + messaging_events.length);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id
+        console.log('sender id is : ' + sender);
         if (event.message && event.message.text) {
-            handleMessage(sender, event.message);
+            handleMessage(sender, event.message, res);
         }
     }
-    res.sendStatus(200)
 });
 
 function firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 }
 
-function handleMessage(sender, message) {
+function handleMessage(sender, message, res) {
     // check greeting is here and is confident
     const greeting = firstEntity(message.nlp, 'greetings');
     if (greeting && greeting.confidence > 0.8) {
-        sendTextMessage(sender, 'Hi there!');
+        sendTextMessage(sender, 'Hi there!', res);
     } else {
-        sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
+        sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200), res)
     }
 }
 
-function sendTextMessage(sender, text) {
+function sendTextMessage(sender, text, res) {
     let messageData = { text:text }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -62,6 +63,9 @@ function sendTextMessage(sender, text) {
             console.log('Error sending messages: ', error)
         } else if (response.body.error) {
             console.log('Error: ', response.body.error)
+        } else {
+            console.log('Facebook Response: ', response.body);
+            res.sendStatus(200);
         }
     })
 }
