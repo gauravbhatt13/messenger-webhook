@@ -52,6 +52,18 @@ app.get('/webhook', function (req, res) {
     }*/
 });
 
+app.post('/webhook', function (req, res) {
+    let messaging_events = req.body.entry[0].messaging
+    console.log('message received with events : ' + messaging_events.length);
+    for (let i = 0; i < messaging_events.length; i++) {
+        let event = req.body.entry[0].messaging[i]
+        let sender = event.sender.id
+        console.log('sender id is : ' + sender);
+        if (event.message && event.message.text) {
+            handleMessage(sender, event.message, res);
+        }
+    }
+});
 
 function firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
