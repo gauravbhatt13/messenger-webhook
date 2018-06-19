@@ -40,16 +40,6 @@ app.get('/webhook', function (req, res) {
             res.sendStatus(403);
         }
     };
-    /*let messaging_events = req.body.entry[0].messaging
-    console.log('message received with events : ' + messaging_events.length);
-    for (let i = 0; i < messaging_events.length; i++) {
-        let event = req.body.entry[0].messaging[i]
-        let sender = event.sender.id
-        console.log('sender id is : ' + sender);
-        if (event.message && event.message.text) {
-            handleMessage(sender, event.message, res);
-        }
-    }*/
 });
 
 app.post('/webhook', function (req, res) {
@@ -60,32 +50,33 @@ app.post('/webhook', function (req, res) {
         let sender = event.sender.id
         console.log('sender id is : ' + sender);
         if (event.message && event.message.text) {
-            handleMessage(sender, event.message, res);
+            handleMessage(sender, event.message);
         }
     }
+    res.sendStatus(200);
 });
 
 function firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 }
 
-function handleMessage(sender, message, res) {
+function handleMessage(sender, message) {
     // check greeting is here and is confident
     const greeting = firstEntity(message.nlp, 'greetings');
     const thanks = firstEntity(message.nlp, 'thanks');
     const bye = firstEntity(message.nlp, 'bye');
     if (greeting && greeting.confidence > 0.8) {
-        sendTextMessage(sender, 'Hi there!', res);
+        sendTextMessage(sender, 'Hi there!');
     } else if (thanks && thanks.confidence > 0.8) {
-        sendTextMessage(sender, 'You are welcome!', res);
+        sendTextMessage(sender, 'You are welcome!');
     } else if (bye && bye.confidence > 0.8) {
-        sendTextMessage(sender, 'See you again!', res);
+        sendTextMessage(sender, 'See you again!');
     } else {
-        sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200), res)
+        sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
     }
 }
 
-function sendTextMessage(sender, text, res) {
+function sendTextMessage(sender, text) {
     let messageData = { text:text }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -102,7 +93,6 @@ function sendTextMessage(sender, text, res) {
             console.log('Error: ', response.body.error)
         } else {
             console.log('Facebook Response: ', response.body);
-            res.sendStatus(200);
         }
     })
 }
