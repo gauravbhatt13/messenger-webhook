@@ -79,7 +79,6 @@ app.post('/alexa-webhook', function (req, res) {
         .speak("your ticket number is 120")
         .withSimpleCard('Hello World', speechText)
         .getResponse();
-    };
 });
 
 app.post('/webhook', function (req, res) {
