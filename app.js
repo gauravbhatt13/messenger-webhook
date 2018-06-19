@@ -12,9 +12,7 @@ const
 const facebook_token = "EAAG3CBTuXN0BAJuZAYaui52SCsRuUoBX47cXjU644hZA3dL2ZAnNdLvBgfr9WlWOI8wCHh006nwglr5yDQZC7u9EDkycKqkOAbEj0J7ohF8CX4Sglq6fRFkU3ZChR8MypR5TNsmeOijTNaZCo709jnnRDEWgI4IzAMqqcyAEZBXUgZDZD";
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 1337, () = > console.log('webhook is listening')
-)
-;
+app.listen(process.env.PORT || 1337, () = > console.log('webhook is listening'));
 
 app.post('/speech-webhook', function (req, res) {
     // Get the city and date from the request
