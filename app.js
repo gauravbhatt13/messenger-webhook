@@ -4,7 +4,8 @@
 const
     express = require('express'),
     bodyParser = require('body-parser'),
-    app = express().use(bodyParser.json())
+    app = express().use(bodyParser.json()),
+    unirest = require('unirest');
 
 const
     request = require('request'),
@@ -13,6 +14,11 @@ const
 const
     facebook_token = "EAAG3CBTuXN0BAJuZAYaui52SCsRuUoBX47cXjU644hZA3dL2ZAnNdLvBgfr9WlWOI8wCHh006nwglr5yDQZC7u9EDkycKqkOAbEj0J7ohF8CX4Sglq6fRFkU3ZChR8MypR5TNsmeOijTNaZCo709jnnRDEWgI4IzAMqqcyAEZBXUgZDZD";
 
+var FD_API_KEY = "yJResqF8HaIMhfVUZFO";
+var FD_ENDPOINT = "pitneybowessoftwareindia";
+
+var PATH = "/api/v2/tickets";
+var URL =  "https://" + FD_ENDPOINT + ".freshdesk.com"+ PATH;
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
@@ -45,8 +51,8 @@ app.get('/webhook', function (req, res) {
 });
 
 app.post('/webhook', function (req, res) {
-    let messaging_events = req.body.entry[0].messaging
-    console.log('message received with events : ' + messaging_events.length);
+    let messaging_events = req.body.entry[0].messaging;
+
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id
@@ -72,7 +78,35 @@ function handleMessage(sender, message) {
 
     if (intent &&  intent.confidence > 0.5 ){
         if(intent.value === 'newticket'){
-            sendTextMessage(sender, 'Your ticket number is 12020');
+
+            var fields = {
+                'email': 'johndoe@tipdia.com',
+                'subject': 'Urgent Issue',
+                'description': message.text,
+                'status': 2,
+                'priority': 1
+            }
+
+            var Request = unirest.post(URL);
+
+            Request.auth({
+                user: FD_API_KEY,
+                pass: "X",
+                sendImmediately: true
+            })
+                .type('json')
+                .send(fields)
+                .end(function(response){
+                    console.log(response.body)
+                    console.log("Response Status : " + response.status)
+                    if(response.status == 201){
+                        console.log("Location Header : "+ response.headers['location'])
+                    }
+                    else{
+                        console.log("X-Request-Id :" + response.headers['x-request-id']);
+                        sendTextMessage(sender, 'Your ticket number is : ' + response.headers['x-request-id']);
+                    }
+                });
         } else if(intent.value === 'greeting'){
             sendTextMessage(sender, 'Hi there! \nHow may I help you today?');
         } else if(intent.value === 'ticketstatus'){
