@@ -12,6 +12,7 @@
     "ask-sdk": "^2.0.6",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "request": "^2.87.0"
+    "request": "^2.87.0",
+    "unirest": "^0.5.1"
   }
 }
