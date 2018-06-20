@@ -62,8 +62,8 @@ function firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 }
 
-function firstIntent(nlp, name) {
-    return nlp && nlp.entities && nlp.entities['intent'] && nlp.entities['intent'][0]['value'];
+function firstIntent(nlp) {
+    return nlp && nlp.entities && nlp.entities['intent'] && nlp.entities['intent'][0];
 }
 
 function handleMessage(sender, message) {
@@ -71,7 +71,8 @@ function handleMessage(sender, message) {
     const greeting = firstEntity(message.nlp, 'greetings');
     const thanks = firstEntity(message.nlp, 'thanks');
     const bye = firstEntity(message.nlp, 'bye');
-    const newticket = firstIntent(message.nlp, 'newticket');
+    const intent = firstIntent(message.nlp);
+    console.log('intent : ' + intent);
 
     if (greeting && greeting.confidence > 0.8) {
         sendTextMessage(sender, 'Hi there!');
@@ -80,7 +81,7 @@ function handleMessage(sender, message) {
         sendTextMessage(sender, 'You are welcome!');
     } else if (bye && bye.confidence > 0.8) {
         sendTextMessage(sender, 'See you again!');
-    } else if (newticket &&  newticket.confidence > 0.8) {
+    } else if (intent &&  intent.confidence > 0.8 && intent.value === 'newticket') {
         sendTextMessage(sender, 'Your ticket number is 12020');
     } else {
         sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
