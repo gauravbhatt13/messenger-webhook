@@ -62,12 +62,16 @@ function firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 }
 
+function firstIntent(nlp, name) {
+    return nlp && nlp.entities && nlp.entities['intent'] && nlp.entities['intent'][0]['value'];
+}
+
 function handleMessage(sender, message) {
     console.log(util.inspect(message, false, null));
     const greeting = firstEntity(message.nlp, 'greetings');
     const thanks = firstEntity(message.nlp, 'thanks');
     const bye = firstEntity(message.nlp, 'bye');
-    const newticket = firstEntity(message.nlp, 'newticket');
+    const newticket = firstIntent(message.nlp, 'newticket');
 
     if (greeting && greeting.confidence > 0.8) {
         sendTextMessage(sender, 'Hi there!');
