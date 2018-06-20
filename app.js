@@ -79,7 +79,7 @@ app.post('/webhook', function (req, res) {
         if (users[senderId] === undefined){
             // set the initial state
             users[senderId] = {};
-            users[senderId]currentState = states.question1
+            users[senderId].currentState = states.question1
         } else {
             // store the answer and update the state
             users[senderId][users[senderId].currentState] = event.message.text
