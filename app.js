@@ -103,7 +103,7 @@ function handleMessage(sender, message) {
                         var location = response.headers['location'];
                         console.log("Location Header : "+ response.headers['location'])
                         location = location.substr(location.lastIndexOf("/") + 1);
-                        sendTextMessage(sender, 'Sorry for the inconvenience.\n We have created a support ticket for the same. \nYour ticket number is : ' + location);
+                        sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
                     }
                     else{
                         console.log("X-Request-Id :" + response.headers['x-request-id']);
