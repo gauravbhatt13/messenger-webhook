@@ -68,12 +68,26 @@ function firstIntent(nlp) {
 
 function handleMessage(sender, message) {
     console.log(util.inspect(message, false, null));
+    const intent = firstIntent(message.nlp);
+
+    if (intent &&  intent.confidence > 0.8 ){
+        if(intent.value === 'newticket'){
+            sendTextMessage(sender, 'Your ticket number is 12020');
+        } else if(intent.value === 'greeting'){
+            sendTextMessage(sender, 'Hi there!');
+            sendTextMessage(sender, 'How may I help you today?');
+        } else if(intent.value === 'greeting'){
+            sendTextMessage(sender, 'Your issue has been assigned to the concerned team.');
+        }
+    } else {
+        sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
+    }
+}
+
+function handleMessageFacebookNLP(sender, message) {
     const greeting = firstEntity(message.nlp, 'greetings');
     const thanks = firstEntity(message.nlp, 'thanks');
     const bye = firstEntity(message.nlp, 'bye');
-    const intent = firstIntent(message.nlp);
-    console.log('intent : ' + intent);
-
     if (greeting && greeting.confidence > 0.8) {
         sendTextMessage(sender, 'Hi there!');
         sendTextMessage(sender, 'How may I help you today?');
@@ -81,10 +95,6 @@ function handleMessage(sender, message) {
         sendTextMessage(sender, 'You are welcome!');
     } else if (bye && bye.confidence > 0.8) {
         sendTextMessage(sender, 'See you again!');
-    } else if (intent &&  intent.confidence > 0.8 && intent.value === 'newticket') {
-        sendTextMessage(sender, 'Your ticket number is 12020');
-    } else {
-        sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
     }
 }
 
