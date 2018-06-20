@@ -13,28 +13,6 @@ const
 const
     facebook_token = "EAAG3CBTuXN0BAJuZAYaui52SCsRuUoBX47cXjU644hZA3dL2ZAnNdLvBgfr9WlWOI8wCHh006nwglr5yDQZC7u9EDkycKqkOAbEj0J7ohF8CX4Sglq6fRFkU3ZChR8MypR5TNsmeOijTNaZCo709jnnRDEWgI4IzAMqqcyAEZBXUgZDZD";
 
-// optionally store this in a database
-const users = {}
-
-// an object of state constants
-const states = {
-    question1: 'question1',
-    question2: 'question2',
-    closing: 'closing',
-}
-
-// mapping of each to state to the message associated with each state
-const messages = {
-    [states.question1]: 'How are you today?',
-    [states.question2]: 'What is the exact issue you are facing?',
-    [states.closing]: 'A ticket has been logged. Please note down the ticket number',
-}
-
-// mapping of each state to the next state
-const nextStates = {
-    [states.question1]: states.question2,
-    [states.question2]: states.closing,
-}
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
@@ -71,21 +49,11 @@ app.post('/webhook', function (req, res) {
     console.log('message received with events : ' + messaging_events.length);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
-        const senderId = event.sender.id
-        console.log('sender id is : ' + senderId);
-        /*if (event.message && event.message.text) {
+        let sender = event.sender.id
+        console.log('sender id is : ' + sender);
+        if (event.message && event.message.text) {
             handleMessage(sender, event.message);
-        }*/
-        if (users[senderId] === undefined){
-            // set the initial state
-            users[senderId] = {};
-            users[senderId].currentState = states.question1
-        } else {
-            // store the answer and update the state
-            users[senderId][users[senderId].currentState] = event.message.text
-            users[senderId].currentState = nextStates[users[senderId.currentState]]
         }
-        sendTextMessage(senderId, messages[users[senderId].currentState]);
     }
     res.sendStatus(200);
 });
@@ -97,9 +65,6 @@ function firstEntity(nlp, name) {
 function firstIntent(nlp) {
     return nlp && nlp.entities && nlp.entities['intent'] && nlp.entities['intent'][0];
 }
-
-
-
 
 function handleMessage(sender, message) {
     console.log(util.inspect(message, false, null));
