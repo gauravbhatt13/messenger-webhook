@@ -74,8 +74,7 @@ function handleMessage(sender, message) {
         if(intent.value === 'newticket'){
             sendTextMessage(sender, 'Your ticket number is 12020');
         } else if(intent.value === 'greeting'){
-            sendTextMessage(sender, 'Hi there!');
-            sendTextMessage(sender, 'How may I help you today?');
+            sendTextMessage(sender, 'Hi there! \nHow may I help you today?');
         } else if(intent.value === 'greeting'){
             sendTextMessage(sender, 'Your issue has been assigned to the concerned team.');
         }
