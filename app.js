@@ -70,7 +70,7 @@ function handleMessage(sender, message) {
     console.log(util.inspect(message, false, null));
     const intent = firstIntent(message.nlp);
 
-    if (intent &&  intent.confidence > 0.8 ){
+    if (intent &&  intent.confidence > 0.5 ){
         if(intent.value === 'newticket'){
             sendTextMessage(sender, 'Your ticket number is 12020');
         } else if(intent.value === 'greeting'){
@@ -87,12 +87,12 @@ function handleMessageFacebookNLP(sender, message) {
     const greeting = firstEntity(message.nlp, 'greetings');
     const thanks = firstEntity(message.nlp, 'thanks');
     const bye = firstEntity(message.nlp, 'bye');
-    if (greeting && greeting.confidence > 0.8) {
+    if (greeting && greeting.confidence > 0.5) {
         sendTextMessage(sender, 'Hi there!');
         sendTextMessage(sender, 'How may I help you today?');
-    } else if (thanks && thanks.confidence > 0.8) {
+    } else if (thanks && thanks.confidence > 0.5) {
         sendTextMessage(sender, 'You are welcome!');
-    } else if (bye && bye.confidence > 0.8) {
+    } else if (bye && bye.confidence > 0.5) {
         sendTextMessage(sender, 'See you again!');
     }
 }
