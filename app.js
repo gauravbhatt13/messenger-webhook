@@ -100,11 +100,13 @@ function handleMessage(sender, message) {
                     console.log(response.body)
                     console.log("Response Status : " + response.status)
                     if(response.status == 201){
+                        var location = response.headers['location'];
                         console.log("Location Header : "+ response.headers['location'])
+                        location = location.substr(location.lastIndexOf("/"));
+                        sendTextMessage(sender, 'Your ticket number is : ' + location);
                     }
                     else{
                         console.log("X-Request-Id :" + response.headers['x-request-id']);
-                        sendTextMessage(sender, 'Your ticket number is : ' + response.headers['x-request-id']);
                     }
                 });
         } else if(intent.value === 'greeting'){
