@@ -102,7 +102,7 @@ function handleMessage(sender, message) {
                     if(response.status == 201){
                         var location = response.headers['location'];
                         console.log("Location Header : "+ response.headers['location'])
-                        location = location.substr(location.lastIndexOf("/"));
+                        location = location.substr(location.lastIndexOf("/") + 1);
                         sendTextMessage(sender, 'Your ticket number is : ' + location);
                     }
                     else{
