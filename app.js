@@ -38,7 +38,7 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
             const intent = firstIntent(data);
             if (intent &&  intent.confidence > 0.5 ){
                 if(intent.value === 'newticket'){
-                    createNewTicket('@'+tweet.user.screen_name, message.text);
+                    createNewTicket('@'+tweet.user.screen_name, tweet.text);
                 } else if(intent.value === 'greeting'){
                     sendTextMessage('@'+tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
                 } else if(intent.value === 'ticketstatus'){
