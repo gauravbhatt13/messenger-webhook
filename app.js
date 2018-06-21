@@ -17,6 +17,46 @@ const
 var FD_API_KEY = "yJResqF8HaIMhfVUZFO";
 var FD_ENDPOINT = "pitneybowessoftwareindia";
 
+var TwitterPackage = require('twitter');
+const {Wit, log} = require('node-wit');3
+var secret = {
+    consumer_key: 'oQdeXLXhL1SMXiQh4cfqMihLq',
+    consumer_secret: 'YOik9p1uK00Poem0cbAGmEa4VmuOG7Wg3YeduaoM31rmXfk8Yk',
+    access_token_key: '54640919-Juf1Auhf2W7gz1kL6nhOG7mj5QauAZJa1rtMmVbxr',
+    access_token_secret: 'gemggeARKcBB1A205EkT366GO4FxuKPWd0ohE73aulUEX'
+}
+var Twitter = new TwitterPackage(secret);
+
+Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
+    stream.on('data', function(tweet) {
+        console.log(tweet.text);
+
+        const client = new Wit({accessToken: '3AFY5YHPBPCRZFIZ7RCNVKYYJ7A3T7NZ'});
+        client.message(tweet.text, {})
+            .then((data) => {
+            console.log('Yay, got Wit.ai response: ' + JSON.stringify(data));
+            const intent = firstIntent(data);
+            if (intent &&  intent.confidence > 0.5 ){
+                if(intent.value === 'newticket'){
+                    createNewTicket('@'+tweet.user.screen_name, message.text);
+                } else if(intent.value === 'greeting'){
+                    sendTextMessage('@'+tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
+                } else if(intent.value === 'ticketstatus'){
+                    getTicketStatus('@'+tweet.user.screen_name);
+                }
+            } else {
+                sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
+            }
+    })
+    .catch(console.error);
+    });
+
+    stream.on('error', function(error) {
+        console.log(error);
+    });
+});
+
+
 var PATH = "/api/v2/tickets";
 var URL =  "https://" + FD_ENDPOINT + ".freshdesk.com"+ PATH;
 // Sets server port and logs message on success
@@ -78,45 +118,52 @@ function handleMessage(sender, message) {
 
     if (intent &&  intent.confidence > 0.5 ){
         if(intent.value === 'newticket'){
-
-            var fields = {
-                'email': 'johndoe@tipdia.com',
-                'subject': 'Urgent Issue',
-                'description': message.text,
-                'status': 2,
-                'priority': 1
-            }
-
-            var Request = unirest.post(URL);
-
-            Request.auth({
-                user: FD_API_KEY,
-                pass: "X",
-                sendImmediately: true
-            })
-                .type('json')
-                .send(fields)
-                .end(function(response){
-                    console.log(response.body)
-                    console.log("Response Status : " + response.status)
-                    if(response.status == 201){
-                        var location = response.headers['location'];
-                        console.log("Location Header : "+ response.headers['location'])
-                        location = location.substr(location.lastIndexOf("/") + 1);
-                        sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
-                    }
-                    else{
-                        console.log("X-Request-Id :" + response.headers['x-request-id']);
-                    }
-                });
+            createNewTicket(sender, message.text);
         } else if(intent.value === 'greeting'){
             sendTextMessage(sender, 'Hi there! \nHow may I help you today?');
         } else if(intent.value === 'ticketstatus'){
-            sendTextMessage(sender, 'Your issue has been assigned to the concerned team.');
+            getTicketStatus(sender);
         }
     } else {
         sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
     }
+}
+
+function getTicketStatus(sender) {
+    sendTextMessage(sender, 'Your issue has been assigned to the concerned team.');
+}
+
+function createNewTicket(sender, description) {
+    var fields = {
+        'email': 'johndoe@tipdia.com',
+        'subject': 'Urgent Issue',
+        'description': description,
+        'status': 2,
+        'priority': 1
+    }
+
+    var Request = unirest.post(URL);
+
+    Request.auth({
+        user: FD_API_KEY,
+        pass: "X",
+        sendImmediately: true
+    })
+        .type('json')
+        .send(fields)
+        .end(function(response){
+            console.log(response.body)
+            console.log("Response Status : " + response.status)
+            if(response.status == 201){
+                var location = response.headers['location'];
+                console.log("Location Header : "+ response.headers['location'])
+                location = location.substr(location.lastIndexOf("/") + 1);
+                sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
+            }
+            else{
+                console.log("X-Request-Id :" + response.headers['x-request-id']);
+            }
+        });
 }
 
 function handleMessageFacebookNLP(sender, message) {
@@ -134,6 +181,25 @@ function handleMessageFacebookNLP(sender, message) {
 }
 
 function sendTextMessage(sender, text) {
+    if(sender.startsWith('@')){
+        var statusObj = {status: sender + " " + text}
+        Twitter.post('statuses/update', statusObj,  function(error, tweetReply, response){
+
+            //if we get an error print it out
+            if(error){
+                console.log(error);
+            }
+
+            //print the text of the tweet we sent out
+            console.log(tweetReply.text);
+        });
+    } else {
+        sendFacebookMessage(sender, text);
+    }
+
+}
+
+function sendFacebookMessage(sender, text) {
     let messageData = { text:text }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
