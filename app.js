@@ -104,9 +104,16 @@ function getTicketStatus(sender) {
 }
 
 function createNewTicket(sender, description) {
+    var name = sender;
+    var isFacebook = true;
+    if(sender.startsWith('@')){
+        name = name.slice(1);
+        isFacebook = false;
+    }
     var fields = {
-        'email': 'johndoe@tipdia.com',
-        'subject': 'Urgent Issue',
+        'name': name,
+        'email': name+'@gmail.com',
+        'subject': isFacebook ? 'Issue reported by Facebook User':'Issue reported by Twitter User',
         'description': description,
         'status': 2,
         'priority': 1
