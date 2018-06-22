@@ -1,5 +1,4 @@
 var TwitterPackage = require('twitter');
-const {Wit, log} = require('node-wit');
 
 var secret = {
     consumer_key: 'oQdeXLXhL1SMXiQh4cfqMihLq',

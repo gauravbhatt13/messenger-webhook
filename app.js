@@ -5,10 +5,11 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    fd = require('freshdesk-nodejs'),
-    Twitter = require('./twitter-bot');
+    fd = require('freshdesk-nodejs');
 
-
+const
+    Twitter = require('./twitter-bot'),
+    {Wit, log} = require('node-wit');
 
 const
     request = require('request'),
