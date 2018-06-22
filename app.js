@@ -66,9 +66,11 @@ app.post('/alexa-webhook', function (req, res) {
             if(err){
                 console.log(err);
             };
-           /* if(fdRes.statusCode === 201){
-                responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ';
-            };*/
+            let status = data.status;
+            let ticketStatus = (status === 2) ? "Open" : (status === 3) ? "Pending" : (status === 4) ?
+                "Resolved" : (status === 5) ? "Closed" : (status === 6) ?
+                    "Waiting on customer" : "Waiting on third party";
+            responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ' + ticketStatus;
             res.send(responseBody);
         });
     } else {
