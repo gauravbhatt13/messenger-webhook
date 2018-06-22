@@ -167,10 +167,11 @@ function createNewTicket(sender, description) {
     }
 
     Freshdesk.createTicket(newTicket, function(err, fdRes, body){
+        console.log(util.inspect(fdRes, false, null));
         if(err){
             console.log(err);
         };
-        if(fdRes.statusCode == 200){
+        if(fdRes.statusCode == 201){
             let location = body.headers['location'];
             console.log("Location Header : "+ body.headers['location'])
             location = location.substr(location.lastIndexOf("/") + 1);
