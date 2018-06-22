@@ -5,7 +5,8 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    fd = require('freshdesk-nodejs');
+    fd = require('freshdesk-nodejs'),
+    Twitter = require('twitter');
 
 
 
@@ -20,15 +21,6 @@ const FD_API_KEY = "yJResqF8HaIMhfVUZFO";
 const FD_ENDPOINT = "pitneybowessoftwareindia";
 const Freshdesk = new fd('https://'+FD_ENDPOINT+'.freshdesk.com', FD_API_KEY);
 
-var TwitterPackage = require('twitter');
-const {Wit, log} = require('node-wit');3
-var secret = {
-    consumer_key: 'oQdeXLXhL1SMXiQh4cfqMihLq',
-    consumer_secret: 'YOik9p1uK00Poem0cbAGmEa4VmuOG7Wg3YeduaoM31rmXfk8Yk',
-    access_token_key: '54640919-Juf1Auhf2W7gz1kL6nhOG7mj5QauAZJa1rtMmVbxr',
-    access_token_secret: 'gemggeARKcBB1A205EkT366GO4FxuKPWd0ohE73aulUEX'
-}
-var Twitter = new TwitterPackage(secret);
 
 
 // Sets server port and logs message on success
@@ -232,7 +224,6 @@ function sendFacebookMessage(sender, text) {
     })
 }
 
-/*
 Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('data', function(tweet) {
         console.log(tweet.text);
@@ -260,4 +251,4 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('error', function(error) {
         console.log(error);
     });
-});*/
+});
