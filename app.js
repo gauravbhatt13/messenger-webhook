@@ -59,7 +59,7 @@ app.post('/alexa-webhook', function (req, res) {
         responseBody.response.shouldEndSession = false;
         responseBody.response.outputSpeech.text = 'What is your ticket number?';
         res.send(responseBody);
-    } else if(req.body.request.intent){
+    } else if(req.body.request.intent && req.body.request.intent.slots){
         //console.log('ticket query : ' + util.inspect(req.body, false, null));
         var ticketNum = req.body.request.intent.slots.numberslot.value;
 
