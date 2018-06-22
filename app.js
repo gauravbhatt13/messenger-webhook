@@ -59,9 +59,14 @@ app.post('/alexa-webhook', function (req, res) {
         responseBody.response.shouldEndSession = false;
         responseBody.response.outputSpeech.text = 'What is your ticket number?';
         res.send(responseBody);
-    } else if(req.body.request.intent && req.body.request.intent.name === 'Ticket_query'){
+    } else if(req.body.request.intent){
         console.log('ticket query : ' + util.inspect(req.body, false, null));
-        /*var ticketNum = req.body.request.intent.slots.SlotName.value;
+        var ticketNum = req.body.request.intent.slots.numberslot.value;
+        
+        if (ticketNum === undefined){
+            ticketNum = 1;
+        }
+
         Freshdesk.getTicket(ticketNum, function(err, res, body){
             if(err){
                 console.log(err);
@@ -71,7 +76,7 @@ app.post('/alexa-webhook', function (req, res) {
                 responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ';
             };
             res.send(responseBody);
-        });*/
+        });
     } else {
         res.send(responseBody);
     }
