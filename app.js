@@ -44,42 +44,35 @@ app.post('/speech-webhook', function (req, res) {
 app.post('/alexa-webhook', function (req, res) {
     console.log(util.inspect(req.body, false, null));
     console.log('request type : ' + req.body.request.type);
-    let responseBody = '';
-    if(req.body.request.type === 'LaunchRequest'){
-        responseBody = {
-            'version': '1.0',
-            'response': {
-                'outputSpeech': {
-                    'type': 'PlainText',
-                    'text': 'What is your ticket number?!'
-                },
-                'shouldEndSession': false
+    let responseBody = {
+        'version': '1.0',
+        'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': 'Please provide valid ticket number'
             },
-            'sessionAttributes': {}
-        };
+            'shouldEndSession': true
+        },
+        'sessionAttributes': {}
+    };
+    if(req.body.request.type === 'LaunchRequest'){
+        responseBody.response.outputSpeech.text = 'What is your ticket number?';
         res.send(responseBody);
-    } else if(req.body.request.intent.name === 'Ticket_query'){
-        var ticketNum = req.body.request.intent.slots.SlotName.value;
+    } else if(req.body.request.intent && req.body.request.intent.name === 'Ticket_query'){
+        console.log('ticket query : ' + util.inspect(req.body, false, null));
+        /*var ticketNum = req.body.request.intent.slots.SlotName.value;
         Freshdesk.getTicket(ticketNum, function(err, res, body){
             if(err){
                 console.log(err);
             };
             if(res.statusCode === 200){
                 console.log("Ticket with ID 5 : " + body);
-                responseBody = {
-                    'version': '1.0',
-                    'response': {
-                        'outputSpeech': {
-                            'type': 'PlainText',
-                            'text': 'Status of ticket number ' + ticketNum + ' is '
-                        },
-                        'shouldEndSession': true
-                    },
-                    'sessionAttributes': {}
-                };
+                responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ';
             };
             res.send(responseBody);
-        });
+        });*/
+    } else {
+        res.send(responseBody);
     }
 });
 
