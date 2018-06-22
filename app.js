@@ -60,7 +60,7 @@ app.post('/alexa-webhook', function (req, res) {
                     "type": "PlainText",
                     "text": "What is your ticket number?"
                 }
-            }
+            },
             'shouldEndSession': false
         },
         'sessionAttributes': {}
