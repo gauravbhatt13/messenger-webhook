@@ -48,11 +48,19 @@ app.post('/alexa-webhook', function (req, res) {
         },
         'version': '1.0',
         'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': 'Hello!'
+            },
+            'card': {
+                'content': 'Hello World!',
+                'title': 'Hello World',
+                'type': 'Simple'
+            },
             "reprompt": {
                 "outputSpeech": {
                     "type": "PlainText",
-                    "text": "Plain text string to speak",
-                    "ssml": "<speak>SSML text string to speak</speak>"
+                    "text": "Plain text string to speak"
                 }
             },
             'shouldEndSession': false
