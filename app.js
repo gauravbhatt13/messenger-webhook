@@ -20,18 +20,17 @@ const
 
 const FD_API_KEY = "yJResqF8HaIMhfVUZFO";
 const FD_ENDPOINT = "pitneybowessoftwareindia";
-const Freshdesk = new fd('https://' + FD_ENDPOINT + '.freshdesk.com', FD_API_KEY);
+const Freshdesk = new fd('https://'+FD_ENDPOINT+'.freshdesk.com', FD_API_KEY);
+
 
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 1337, () = > console.log('webhook is listening')
-)
-;
+app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
 app.post('/speech-webhook', function (req, res) {
     // Get the city and date from the request
     let number = req.body.queryResult.parameters['number-integer'];
-    res.json({'fulfillmentText': 'your ticket number ' + number + ' is under processing'});
+    res.json({ 'fulfillmentText': 'your ticket number ' + number + ' is under processing'});
     //res.sendStatus(200)
 });
 
@@ -49,32 +48,32 @@ app.post('/alexa-webhook', function (req, res) {
         },
         'sessionAttributes': {}
     };
-    if (req.body.request.type === 'LaunchRequest') {
+    if(req.body.request.type === 'LaunchRequest'){
         responseBody.response.shouldEndSession = false;
         responseBody.response.outputSpeech.text = 'What is your ticket number?';
         res.send(responseBody);
-    } else if (req.body.request.intent && req.body.request.intent.slots) {
+    } else if(req.body.request.intent && req.body.request.intent.slots){
         //console.log('ticket query : ' + util.inspect(req.body, false, null));
         var ticketNum = req.body.request.intent.slots.numberslot.value;
 
-        if (ticketNum === undefined) {
+        if (ticketNum === undefined){
             ticketNum = 1;
         }
 
-        Freshdesk.getTicket(ticketNum, function (err, data, extra) {
+        Freshdesk.getTicket(ticketNum, function(err, data, extra){
             console.log("Ticket with ID 5 : " + util.inspect(data, false, null));
-            if (err) {
+            if(err){
                 console.log(err);
-            }
-            ;
+            };
 
-            if (data) {
+            if(data){
                 let status = data.status;
                 let ticketStatus = (status === 2) ? "Open" : (status === 3) ? "Pending" : (status === 4) ?
                     "Resolved" : (status === 5) ? "Closed" : (status === 6) ?
                         "Waiting on customer" : "Waiting on third party";
                 responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ' + ticketStatus;
             }
+
             res.send(responseBody);
         });
     } else {
@@ -100,8 +99,7 @@ app.get('/webhook', function (req, res) {
             // Responds with '403 Forbidden' if verify tokens do not match
             res.sendStatus(403);
         }
-    }
-    ;
+    };
 });
 
 app.post('/webhook', function (req, res) {
@@ -130,12 +128,12 @@ function handleMessage(sender, message) {
     //console.log(util.inspect(message, false, null));
     const intent = firstIntent(message.nlp);
 
-    if (intent && intent.confidence > 0.5) {
-        if (intent.value === 'newticket') {
+    if (intent &&  intent.confidence > 0.5 ){
+        if(intent.value === 'newticket'){
             createNewTicket(sender, message.text);
-        } else if (intent.value === 'greeting') {
+        } else if(intent.value === 'greeting'){
             sendTextMessage(sender, 'Hi there! \nHow may I help you today?');
-        } else if (intent.value === 'ticketstatus') {
+        } else if(intent.value === 'ticketstatus'){
             getTicketStatus(sender);
         }
     } else {
@@ -149,29 +147,28 @@ function getTicketStatus(sender) {
 
 function createNewTicket(sender, description) {
     let CREATE_PATH = "/api/v2/tickets";
-    let URL = "https://" + FD_ENDPOINT + ".freshdesk.com" + CREATE_PATH;
+    let URL =  "https://" + FD_ENDPOINT + ".freshdesk.com"+ CREATE_PATH;
     let name = sender;
     let isFacebook = true;
 
-    if (sender.startsWith('@')) {
+    if(sender.startsWith('@')){
         name = name.slice(1);
         isFacebook = false;
     }
 
     let newTicket = {
         'name': name,
-        'email': name + '@gmail.com',
-        'subject': isFacebook ? 'Issue reported by Facebook User' : 'Issue reported by Twitter User',
+        'email': name+'@gmail.com',
+        'subject': isFacebook ? 'Issue reported by Facebook User':'Issue reported by Twitter User',
         'description': description,
         'status': 2,
         'priority': 1
     }
 
-    Freshdesk.createTicket(newTicket, function (err, data) {
-        if (err) {
+    Freshdesk.createTicket(newTicket, function(err, data){
+        if(err){
             console.log(err);
-        }
-        ;
+        };
         console.log(util.inspect(data, false, null));
         sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + data['id']);
         /*if(fdRes.statusCode == 201){
@@ -196,12 +193,12 @@ function handleMessageFacebookNLP(sender, message) {
 }
 
 function sendTextMessage(sender, text) {
-    if (sender.startsWith('@')) {
+    if(sender.startsWith('@')){
         let statusObj = {status: sender + " " + text}
-        Twitter.post('statuses/update', statusObj, function (error, tweetReply, response) {
+        Twitter.post('statuses/update', statusObj,  function(error, tweetReply, response){
 
             //if we get an error print it out
-            if (error) {
+            if(error){
                 console.log(error);
             }
 
@@ -215,16 +212,16 @@ function sendTextMessage(sender, text) {
 }
 
 function sendFacebookMessage(sender, text) {
-    let messageData = {text: text}
+    let messageData = { text:text }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token: facebook_token},
+        qs: {access_token:facebook_token},
         method: 'POST',
         json: {
-            recipient: {id: sender},
+            recipient: {id:sender},
             message: messageData,
         }
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.log('Error sending messages: ', error)
         } else if (response.body.error) {
