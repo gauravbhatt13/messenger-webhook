@@ -71,7 +71,7 @@ app.post('/alexa-webhook', function (req, res) {
             if(err){
                 console.log(err);
             };
-            if(fdRes.statusCode === 200){
+            if(fdRes.statusCode === 201){
                 console.log("Ticket with ID 5 : " + body);
                 responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ';
             };
@@ -167,7 +167,6 @@ function createNewTicket(sender, description) {
     }
 
     Freshdesk.createTicket(newTicket, function(err, fdRes, body){
-        console.log(util.inspect(fdRes, false, null));
         if(err){
             console.log(err);
         };
