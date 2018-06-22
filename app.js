@@ -43,7 +43,7 @@ app.post('/alexa-webhook', function (req, res) {
     console.log(util.inspect(res, false, null));
     const responseBody = {
         'intent': {
-            'name' : 'Ticket_query'
+            'name' : 'Ticket_query',
             'inputs' : []
         },
         'version': '1.0',
