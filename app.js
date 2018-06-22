@@ -51,7 +51,7 @@ app.post('/alexa-webhook', function (req, res) {
                 'type': 'PlainText',
                 'text': 'Please provide valid ticket number'
             },
-            'shouldEndSession': true;
+            'shouldEndSession': true
         },
         'sessionAttributes': {}
     };
