@@ -27,36 +27,6 @@ var secret = {
 }
 var Twitter = new TwitterPackage(secret);
 
-Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
-    stream.on('data', function(tweet) {
-        console.log(tweet.text);
-
-        const client = new Wit({accessToken: '3AFY5YHPBPCRZFIZ7RCNVKYYJ7A3T7NZ'});
-        client.message(tweet.text, {})
-            .then((data) => {
-            console.log('Yay, got Wit.ai response: ' + JSON.stringify(data));
-            const intent = firstIntent(data);
-            if (intent &&  intent.confidence > 0.5 ){
-                if(intent.value === 'newticket'){
-                    createNewTicket('@'+tweet.user.screen_name, tweet.text);
-                } else if(intent.value === 'greeting'){
-                    sendTextMessage('@'+tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
-                } else if(intent.value === 'ticketstatus'){
-                    getTicketStatus('@'+tweet.user.screen_name);
-                }
-            } else {
-                sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
-            }
-    })
-    .catch(console.error);
-    });
-
-    stream.on('error', function(error) {
-        console.log(error);
-    });
-});
-
-
 var PATH = "/api/v2/tickets";
 var URL =  "https://" + FD_ENDPOINT + ".freshdesk.com"+ PATH;
 // Sets server port and logs message on success
@@ -219,3 +189,32 @@ function sendFacebookMessage(sender, text) {
         }
     })
 }
+
+Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
+    stream.on('data', function(tweet) {
+        console.log(tweet.text);
+
+        const client = new Wit({accessToken: '3AFY5YHPBPCRZFIZ7RCNVKYYJ7A3T7NZ'});
+        client.message(tweet.text, {})
+            .then((data) => {
+            console.log('Yay, got Wit.ai response: ' + JSON.stringify(data));
+        const intent = firstIntent(data);
+        if (intent &&  intent.confidence > 0.5 ){
+            if(intent.value === 'newticket'){
+                createNewTicket('@'+tweet.user.screen_name, tweet.text);
+            } else if(intent.value === 'greeting'){
+                sendTextMessage('@'+tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
+            } else if(intent.value === 'ticketstatus'){
+                getTicketStatus('@'+tweet.user.screen_name);
+            }
+        } else {
+            sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
+        }
+    })
+    .catch(console.error);
+    });
+
+    stream.on('error', function(error) {
+        console.log(error);
+    });
+});
