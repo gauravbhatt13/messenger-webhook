@@ -5,7 +5,9 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    unirest = require('unirest');
+    fd = require('freshdesk-nodejs');
+
+
 
 const
     request = require('request'),
@@ -14,8 +16,9 @@ const
 const
     facebook_token = "EAAG3CBTuXN0BAJuZAYaui52SCsRuUoBX47cXjU644hZA3dL2ZAnNdLvBgfr9WlWOI8wCHh006nwglr5yDQZC7u9EDkycKqkOAbEj0J7ohF8CX4Sglq6fRFkU3ZChR8MypR5TNsmeOijTNaZCo709jnnRDEWgI4IzAMqqcyAEZBXUgZDZD";
 
-var FD_API_KEY = "yJResqF8HaIMhfVUZFO";
-var FD_ENDPOINT = "pitneybowessoftwareindia";
+const FD_API_KEY = "yJResqF8HaIMhfVUZFO";
+const FD_ENDPOINT = "pitneybowessoftwareindia";
+const Freshdesk = new fd('https://'+FD_ENDPOINT+'.freshdesk.com', FD_API_KEY);
 
 var TwitterPackage = require('twitter');
 const {Wit, log} = require('node-wit');3
@@ -27,8 +30,7 @@ var secret = {
 }
 var Twitter = new TwitterPackage(secret);
 
-var PATH = "/api/v2/tickets";
-var URL =  "https://" + FD_ENDPOINT + ".freshdesk.com"+ PATH;
+
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
@@ -42,33 +44,43 @@ app.post('/speech-webhook', function (req, res) {
 app.post('/alexa-webhook', function (req, res) {
     //console.log(util.inspect(req, false, null));
     console.log('request type : ' + req.body.request.type);
-    const responseBody = {
-        'intent': {
-            'name' : 'Ticket_query',
-            'inputs' : []
-        },
-        'version': '1.0',
-        'response': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': 'Hello!'
+    const responseBody = '';
+    if(req.body.request.type === 'LaunchRequest'){
+        responseBody = {
+            'version': '1.0',
+            'response': {
+                'outputSpeech': {
+                    'type': 'PlainText',
+                    'text': 'What is your ticket number?!'
+                },
+                'shouldEndSession': false
             },
-            'card': {
-                'content': 'Hello World!',
-                'title': 'Hello World',
-                'type': 'Simple'
-            },
-            "reprompt": {
-                "outputSpeech": {
-                    "type": "PlainText",
-                    "text": "What is your ticket number?"
-                }
-            },
-            'shouldEndSession': false
-        },
-        'sessionAttributes': {}
-    };
-    res.send(responseBody);
+            'sessionAttributes': {}
+        };
+        res.send(responseBody);
+    } else if(req.body.request.intent.name === 'Ticket_query'){
+        var ticketNum = req.body.request.intent.slots.SlotName.value;
+        Freshdesk.getTicket(ticketNum, function(err, res, body){
+            if(err){
+                console.log(err);
+            };
+            if(res.statusCode === 200){
+                console.log("Ticket with ID 5 : " + body);
+                responseBody = {
+                    'version': '1.0',
+                    'response': {
+                        'outputSpeech': {
+                            'type': 'PlainText',
+                            'text': 'Status of ticket number ' + ticketNum + ' is '
+                        },
+                        'shouldEndSession': true
+                    },
+                    'sessionAttributes': {}
+                };
+            };
+            res.send(responseBody);
+        });
+    }
 });
 
 app.get('/webhook', function (req, res) {
@@ -136,13 +148,17 @@ function getTicketStatus(sender) {
 }
 
 function createNewTicket(sender, description) {
-    var name = sender;
-    var isFacebook = true;
+    let CREATE_PATH = "/api/v2/tickets";
+    let URL =  "https://" + FD_ENDPOINT + ".freshdesk.com"+ CREATE_PATH;
+    let name = sender;
+    let isFacebook = true;
+
     if(sender.startsWith('@')){
         name = name.slice(1);
         isFacebook = false;
     }
-    var fields = {
+
+    let newTicket = {
         'name': name,
         'email': name+'@gmail.com',
         'subject': isFacebook ? 'Issue reported by Facebook User':'Issue reported by Twitter User',
@@ -151,28 +167,17 @@ function createNewTicket(sender, description) {
         'priority': 1
     }
 
-    var Request = unirest.post(URL);
-
-    Request.auth({
-        user: FD_API_KEY,
-        pass: "X",
-        sendImmediately: true
-    })
-        .type('json')
-        .send(fields)
-        .end(function(response){
-            console.log(response.body)
-            console.log("Response Status : " + response.status)
-            if(response.status == 201){
-                var location = response.headers['location'];
-                console.log("Location Header : "+ response.headers['location'])
-                location = location.substr(location.lastIndexOf("/") + 1);
-                sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
-            }
-            else{
-                console.log("X-Request-Id :" + response.headers['x-request-id']);
-            }
-        });
+    Freshdesk.createTicket(newTicket, function(err, res, body){
+        if(err){
+            console.log(err);
+        };
+        if(res.statusCode == 200){
+            let location = body.headers['location'];
+            console.log("Location Header : "+ body.headers['location'])
+            location = location.substr(location.lastIndexOf("/") + 1);
+            sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
+        }
+    });
 }
 
 function handleMessageFacebookNLP(sender, message) {
@@ -191,7 +196,7 @@ function handleMessageFacebookNLP(sender, message) {
 
 function sendTextMessage(sender, text) {
     if(sender.startsWith('@')){
-        var statusObj = {status: sender + " " + text}
+        let statusObj = {status: sender + " " + text}
         Twitter.post('statuses/update', statusObj,  function(error, tweetReply, response){
 
             //if we get an error print it out
