@@ -40,7 +40,8 @@ app.post('/speech-webhook', function (req, res) {
 });
 
 app.post('/alexa-webhook', function (req, res) {
-    console.log(util.inspect(req, false, null));
+    //console.log(util.inspect(req, false, null));
+    console.log('request type : ' + req.body.request.type);
     const responseBody = {
         'intent': {
             'name' : 'Ticket_query',
