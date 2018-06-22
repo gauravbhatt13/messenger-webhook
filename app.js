@@ -42,7 +42,7 @@ app.post('/speech-webhook', function (req, res) {
 });
 
 app.post('/alexa-webhook', function (req, res) {
-    console.log(util.inspect(req.body, false, null));
+    //console.log(util.inspect(req.body, false, null));
     console.log('request type : ' + req.body.request.type);
     let responseBody = {
         'version': '1.0',
@@ -60,7 +60,7 @@ app.post('/alexa-webhook', function (req, res) {
         responseBody.response.outputSpeech.text = 'What is your ticket number?';
         res.send(responseBody);
     } else if(req.body.request.intent){
-        console.log('ticket query : ' + util.inspect(req.body, false, null));
+        //console.log('ticket query : ' + util.inspect(req.body, false, null));
         var ticketNum = req.body.request.intent.slots.numberslot.value;
 
         if (ticketNum === undefined){
@@ -68,6 +68,7 @@ app.post('/alexa-webhook', function (req, res) {
         }
 
         Freshdesk.getTicket(ticketNum, function(err, fdRes, body){
+            console.log('status of ticket number : ' + fdRes.statusCode);
             if(err){
                 console.log(err);
             };
@@ -126,7 +127,7 @@ function firstIntent(nlp) {
 }
 
 function handleMessage(sender, message) {
-    console.log(util.inspect(message, false, null));
+    //console.log(util.inspect(message, false, null));
     const intent = firstIntent(message.nlp);
 
     if (intent &&  intent.confidence > 0.5 ){
