@@ -6,7 +6,7 @@ const
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
     fd = require('freshdesk-nodejs'),
-    Twitter = require('twitter-bot');
+    Twitter = require('./twitter-bot');
 
 
 
