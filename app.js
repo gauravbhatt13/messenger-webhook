@@ -41,6 +41,27 @@ app.post('/speech-webhook', function (req, res) {
 
 app.post('/alexa-webhook', function (req, res) {
     console.log(util.inspect(res, false, null));
+    const responseBody = {
+        'intent': {
+            'name' : 'Ticket_query'
+            'inputs' : []
+        },
+        'version': '1.0',
+        'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': 'Hello World!'
+            },
+            'card': {
+                'content': 'Hello World!',
+                'title': 'Hello World',
+                'type': 'Simple'
+            },
+            'shouldEndSession': true
+        },
+        'sessionAttributes': {}
+    };
+    res.send(responseBody);
 });
 
 app.get('/webhook', function (req, res) {
