@@ -7,4 +7,4 @@ var secret = {
     access_token_key: '54640919-Juf1Auhf2W7gz1kL6nhOG7mj5QauAZJa1rtMmVbxr',
     access_token_secret: 'gemggeARKcBB1A205EkT366GO4FxuKPWd0ohE73aulUEX'
 }
-export.module = new TwitterPackage(secret);
+module.exports = new TwitterPackage(secret);
