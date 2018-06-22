@@ -5,7 +5,8 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    unirest = require('unirest');
+    unirest = require('unirest'),
+    Alexa = require('./alexa');
 
 const
     request = require('request'),
@@ -48,19 +49,11 @@ app.post('/alexa-webhook', function (req, res) {
         },
         'version': '1.0',
         'response': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': 'Hello!'
-            },
-            'card': {
-                'content': 'Hello World!',
-                'title': 'Hello World',
-                'type': 'Simple'
-            },
             "reprompt": {
                 "outputSpeech": {
                     "type": "PlainText",
-                    "text": "What is your ticket number?"
+                    "text": "Plain text string to speak",
+                    "ssml": "<speak>SSML text string to speak</speak>"
                 }
             },
             'shouldEndSession': false
