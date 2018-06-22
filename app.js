@@ -172,9 +172,7 @@ function createNewTicket(sender, description) {
             console.log(err);
         };
         if(fdRes.statusCode == 201){
-            let location = body.headers['location'];
-            console.log("Location Header : "+ body.headers['location'])
-            location = location.substr(location.lastIndexOf("/") + 1);
+            let location = body['id'];
             sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
         }
     });
