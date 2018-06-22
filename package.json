@@ -9,13 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ask-sdk": "^2.0.6",
+    "alexa-sdk": "^1.0.25",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "freshdesk-nodejs": "^1.0.0",
     "node-wit": "^5.0.0",
     "request": "^2.87.0",
     "twitter": "^1.7.1",
-    "unirest": "^0.5.1",
     "wit-ai": "^4.1.2"
   }
 }
