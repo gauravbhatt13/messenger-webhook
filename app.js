@@ -5,8 +5,7 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    unirest = require('unirest'),
-    Alexa = require('./alexa');
+    unirest = require('unirest');
 
 const
     request = require('request'),
