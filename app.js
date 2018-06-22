@@ -39,6 +39,10 @@ app.post('/speech-webhook', function (req, res) {
     //res.sendStatus(200)
 });
 
+app.post('/alexa-webhook', function (req, res) {
+    console.log(util.inspect(res, false, null));
+});
+
 app.get('/webhook', function (req, res) {
     let VERIFY_TOKEN = "hello-webhook";
     let mode = req.query['hub.mode'];
