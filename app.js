@@ -60,7 +60,7 @@ app.post('/alexa-webhook', function (req, res) {
             "reprompt": {
                 "outputSpeech": {
                     "type": "PlainText",
-                    "text": "Plain text string to speak"
+                    "text": "What is your ticket number?"
                 }
             },
             'shouldEndSession': false
