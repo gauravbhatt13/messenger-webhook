@@ -51,11 +51,12 @@ app.post('/alexa-webhook', function (req, res) {
                 'type': 'PlainText',
                 'text': 'Please provide valid ticket number'
             },
-            'shouldEndSession': true
+            'shouldEndSession': true;
         },
         'sessionAttributes': {}
     };
     if(req.body.request.type === 'LaunchRequest'){
+        responseBody.response.shouldEndSession = false;
         responseBody.response.outputSpeech.text = 'What is your ticket number?';
         res.send(responseBody);
     } else if(req.body.request.intent && req.body.request.intent.name === 'Ticket_query'){
