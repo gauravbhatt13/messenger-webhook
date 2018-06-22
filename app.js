@@ -67,11 +67,11 @@ app.post('/alexa-webhook', function (req, res) {
             ticketNum = 1;
         }
 
-        Freshdesk.getTicket(ticketNum, function(err, res, body){
+        Freshdesk.getTicket(ticketNum, function(err, fdRes, body){
             if(err){
                 console.log(err);
             };
-            if(res.statusCode === 200){
+            if(fdRes.statusCode === 200){
                 console.log("Ticket with ID 5 : " + body);
                 responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ';
             };
@@ -166,11 +166,11 @@ function createNewTicket(sender, description) {
         'priority': 1
     }
 
-    Freshdesk.createTicket(newTicket, function(err, res, body){
+    Freshdesk.createTicket(newTicket, function(err, fdRes, body){
         if(err){
             console.log(err);
         };
-        if(res.statusCode == 200){
+        if(fdRes.statusCode == 200){
             let location = body.headers['location'];
             console.log("Location Header : "+ body.headers['location'])
             location = location.substr(location.lastIndexOf("/") + 1);
