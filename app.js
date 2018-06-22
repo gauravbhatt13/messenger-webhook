@@ -68,7 +68,7 @@ app.post('/alexa-webhook', function (req, res) {
         }
 
         Freshdesk.getTicket(ticketNum, function(err, fdRes, body){
-            console.log('status of ticket number : ' + fdRes.statusCode);
+            console.log('status of ticket number : ' + ticketNum + ' is ' + fdRes.statusCode);
             if(err){
                 console.log(err);
             };
