@@ -5,11 +5,11 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    fd = require('freshdesk-nodejs');
+    fd = require('freshdesk-api')
 
-const
+/*const
     Twitter = require('./twitter-bot'),
-    {Wit, log} = require('node-wit');
+    {Wit, log} = require('node-wit');*/
 
 const
     request = require('request'),
@@ -60,15 +60,15 @@ app.post('/alexa-webhook', function (req, res) {
             ticketNum = 1;
         }
 
-        Freshdesk.getTicket(ticketNum, function(err, fdRes, body){
-            console.log('status of ticket number : ' + ticketNum + ' is ' + fdRes.statusCode);
-            console.log("Ticket with ID 5 : " + util.inspect(body, false, null));
+        Freshdesk.getTicket(ticketNum, function(err, data, extra){
+            console.log('status of ticket number : ' + ticketNum + ' is ' + data);
+            console.log("Ticket with ID 5 : " + util.inspect(data, false, null));
             if(err){
                 console.log(err);
             };
-            if(fdRes.statusCode === 201){
+           /* if(fdRes.statusCode === 201){
                 responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ';
-            };
+            };*/
             res.send(responseBody);
         });
     } else {
@@ -160,14 +160,16 @@ function createNewTicket(sender, description) {
         'priority': 1
     }
 
-    Freshdesk.createTicket(newTicket, function(err, fdRes, body){
+    Freshdesk.createTicket(newTicket, function(err, data){
         if(err){
             console.log(err);
         };
-        if(fdRes.statusCode == 201){
+        console.log(util.inspect(data, false, null));
+        sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + data['id']);
+        /*if(fdRes.statusCode == 201){
             let location = body['id'];
             sendTextMessage(sender, 'Sorry for the inconvenience.\nWe have created a support ticket for the same. \nYour ticket number is : ' + location);
-        }
+        }*/
     });
 }
 
@@ -225,7 +227,7 @@ function sendFacebookMessage(sender, text) {
     })
 }
 
-Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
+/*Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('data', function(tweet) {
         console.log(tweet.text);
 
@@ -252,4 +254,4 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('error', function(error) {
         console.log(error);
     });
-});
+});*/
