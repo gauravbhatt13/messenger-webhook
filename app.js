@@ -62,7 +62,7 @@ app.post('/alexa-webhook', function (req, res) {
     } else if(req.body.request.intent){
         console.log('ticket query : ' + util.inspect(req.body, false, null));
         var ticketNum = req.body.request.intent.slots.numberslot.value;
-        
+
         if (ticketNum === undefined){
             ticketNum = 1;
         }
@@ -233,6 +233,7 @@ function sendFacebookMessage(sender, text) {
     })
 }
 
+/*
 Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('data', function(tweet) {
         console.log(tweet.text);
@@ -260,4 +261,4 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('error', function(error) {
         console.log(error);
     });
-});
+});*/
