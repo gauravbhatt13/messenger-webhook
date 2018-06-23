@@ -203,7 +203,7 @@ function getTicketStatus(sender, number) {
                 "Resolved" : (status === 5) ? "Closed" : (status === 6) ?
                     "Waiting on customer" : "Waiting on third party";
         }
-        sendTextMessage(sender, 'Status of ticket number ' + ticketNum + ' is ' + ticketStatus);
+        sendTextMessage(sender, 'Status of ticket number ' + number + ' is ' + ticketStatus);
     });
 }
 
