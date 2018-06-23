@@ -202,8 +202,8 @@ function getTicketStatus(sender, number) {
             let ticketStatus = (status === 2) ? "Open" : (status === 3) ? "Pending" : (status === 4) ?
                 "Resolved" : (status === 5) ? "Closed" : (status === 6) ?
                     "Waiting on customer" : "Waiting on third party";
+            sendTextMessage(sender, 'Status of ticket number ' + number + ' is ' + ticketStatus);
         }
-        sendTextMessage(sender, 'Status of ticket number ' + number + ' is ' + ticketStatus);
     });
 }
 
