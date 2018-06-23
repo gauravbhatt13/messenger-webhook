@@ -7,9 +7,9 @@ const
     app = express().use(bodyParser.json()),
     fd = require('freshdesk-api')
 
-const
+/*const
     Twitter = require('./twitter-bot'),
-    {Wit, log} = require('node-wit');
+    {Wit, log} = require('node-wit');*/
 
 const
     request = require('request'),
@@ -184,7 +184,7 @@ function handleMessage(sender, message) {
         } else if(intent.value === 'greeting'){
             sendTextMessage(sender, 'Hi there! \nHow may I help you today?');
         } else if(intent.value === 'ticketstatus'){
-            getTicketStatus(sender, message.nlp.number.value);
+            getTicketStatus(sender, message.nlp.entities.number[0].value);
         }
     } else {
         sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
@@ -294,7 +294,7 @@ function sendFacebookMessage(sender, text) {
     })
 }
 
-Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
+/*Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('data', function(tweet) {
         console.log(tweet.text);
 
@@ -321,4 +321,4 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('error', function(error) {
         console.log(error);
     });
-});
+});*/
