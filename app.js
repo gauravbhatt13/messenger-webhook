@@ -22,7 +22,7 @@ const FD_API_KEY = "yJResqF8HaIMhfVUZFO";
 const FD_ENDPOINT = "pitneybowessoftwareindia";
 const Freshdesk = new fd('https://'+FD_ENDPOINT+'.freshdesk.com', FD_API_KEY);
 
-
+var newTicketCustomerId = undefined;
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -74,6 +74,56 @@ app.post('/alexa-webhook', function (req, res) {
                 responseBody.response.outputSpeech.text = 'Status of ticket number ' + ticketNum + ' is ' + ticketStatus;
             }
 
+            res.send(responseBody);
+        });
+    } else {
+        res.send(responseBody);
+    }
+});
+
+app.post('/alexa-webhook-create-intent', function (req, res) {
+    //console.log(util.inspect(req.body, false, null));
+    console.log('request type : ' + req.body.request.type + ' and request id is : ' + req.body.request.requestId);
+    let responseBody = {
+        'version': '1.0',
+        'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': 'Please provide a valid request'
+            },
+            'shouldEndSession': true
+        },
+        'sessionAttributes': {}
+    };
+
+    if(req.body.request.type === 'LaunchRequest'){
+        responseBody.response.shouldEndSession = false;
+        responseBody.response.outputSpeech.text = 'What is your customer id?';
+        res.send(responseBody);
+    } else if(req.body.request.type === 'IntentRequest' && req.body.request.intent.slots && newTicketCustomerId === undefined){
+        responseBody.response.shouldEndSession = false;
+        newTicketCustomerId = req.body.request.intent.slots.customerid.value
+        responseBody.response.outputSpeech.text = 'What kind of ticket you want to create? Refund or Address Change?';
+        res.send(responseBody);
+    } else if(req.body.request.intent && req.body.request.intent.slots){
+        var ticketType = req.body.request.intent.slots.ticket_description.value;
+
+        let newTicket = {
+            'name': newTicketCustomerId,
+            'email': newTicketCustomerId+'@gmail.com',
+            'subject': 'Issue reported by Alexa User',
+            'description': 'Process ' + ticketType ' request',
+            'status': 2,
+            'priority': 1
+        }
+
+        Freshdesk.createTicket(newTicket, function(err, data){
+            if(err){
+                console.log(err);
+            };
+            console.log(util.inspect(data, false, null));
+            newTicketCustomerId = undefined;
+            responseBody.response.outputSpeech.text = 'Your ticket number is : ' + data['id'];
             res.send(responseBody);
         });
     } else {
