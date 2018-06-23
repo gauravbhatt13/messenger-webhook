@@ -36,7 +36,7 @@ app.post('/speech-webhook', function (req, res) {
 
 app.post('/alexa-webhook', function (req, res) {
     //console.log(util.inspect(req.body, false, null));
-    console.log('request type : ' + req.body.request.type);
+    console.log('request type : ' + req.body.request.type + ' and request id is : ' + req.body.request.requestId);
     let responseBody = {
         'version': '1.0',
         'response': {
