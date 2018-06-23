@@ -112,7 +112,7 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
             'name': newTicketCustomerId,
             'email': newTicketCustomerId+'@gmail.com',
             'subject': 'Issue reported by Alexa User',
-            'description': 'Process ' + ticketType ' request',
+            'description': 'Process ' + ticketType + ' request',
             'status': 2,
             'priority': 1
         }
