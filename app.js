@@ -175,7 +175,7 @@ function firstIntent(nlp) {
 }
 
 function handleMessage(sender, message) {
-    //console.log(util.inspect(message, false, null));
+    console.log(util.inspect(message, false, null));
     const intent = firstIntent(message.nlp);
 
     if (intent &&  intent.confidence > 0.5 ){
