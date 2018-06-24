@@ -156,7 +156,7 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
                     };
                     console.log(util.inspect(data, false, null));
                     newTicketCustomerId = undefined;
-                    responseBody.response.outputSpeech.text = 'Shipping is available for : ' + City + '. Address Change request' +
+                    responseBody.response.outputSpeech.text = 'Shipping is available for : ' + cityName + '. Address Change request' +
                         ' has been created. Your ticket number is :' + data['id'];
                     res.send(responseBody);
                 });
