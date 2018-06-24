@@ -8,9 +8,9 @@ const
     fd = require('freshdesk-api'),
     request = require('request-promise');
 
-/*const
+const
     Twitter = require('./twitter-bot'),
-    {Wit, log} = require('node-wit');*/
+    {Wit, log} = require('node-wit');
 
 const
     util = require('util')
@@ -148,7 +148,7 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
                     'name': newTicketCustomerId,
                     'email': newTicketCustomerId + '@gmail.com',
                     'subject': 'Issue reported by Alexa User',
-                    'description': 'Process address change request to city : ' + cityName,
+                    'description': 'Process address change request to city : ' + cityName +'(PINCODE: ' + pincode + ')',
                     'status': 2,
                     'priority': 1
                 }
@@ -159,7 +159,7 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
                     };
                     console.log(util.inspect(data, false, null));
                     newTicketCustomerId = undefined;
-                    responseBody.response.outputSpeech.text = 'Shipping is available for city ' + cityName + '. Address Change request' +
+                    responseBody.response.outputSpeech.text = 'Shipping is available for city ' + cityName + ' with pincode '+ pincode + '. Address Change request' +
                         ' has been created. Your ticket number is :' + data['id'];
                     res.send(responseBody);
                 });
@@ -360,7 +360,7 @@ function sendFacebookMessage(sender, text) {
     })
 }
 
-/*Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
+Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('data', function(tweet) {
         console.log(tweet.text);
 
@@ -387,4 +387,4 @@ function sendFacebookMessage(sender, text) {
     stream.on('error', function(error) {
         console.log(error);
     });
-});*/
+});
