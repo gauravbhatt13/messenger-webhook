@@ -13,7 +13,6 @@ const
     {Wit, log} = require('node-wit');*/
 
 const
-    request = require('request'),
     util = require('util')
 
 const
