@@ -134,7 +134,7 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
             });
         }
 
-    } else if(req.body.request.intent && req.body.request.intent.name == 'pincode' && req.body.request.intent.slots){
+    } else if(req.body.request.intent && req.body.request.intent.name == 'pincode_intent' && req.body.request.intent.slots){
         var pincode = req.body.request.intent.slots.pincode.value;
         getCityName(pincode).then(function (body) {
             var info = JSON.parse(body);
