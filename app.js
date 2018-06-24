@@ -16,6 +16,9 @@ const
     util = require('util')
 
 const
+    PB_TOKEN = "V14iDm4KXlch4cu04V8GtsVCU49w";
+
+const
     facebook_token = "EAAG3CBTuXN0BAJuZAYaui52SCsRuUoBX47cXjU644hZA3dL2ZAnNdLvBgfr9WlWOI8wCHh006nwglr5yDQZC7u9EDkycKqkOAbEj0J7ohF8CX4Sglq6fRFkU3ZChR8MypR5TNsmeOijTNaZCo709jnnRDEWgI4IzAMqqcyAEZBXUgZDZD";
 
 const FD_API_KEY = "yJResqF8HaIMhfVUZFO";
@@ -156,7 +159,7 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
                     };
                     console.log(util.inspect(data, false, null));
                     newTicketCustomerId = undefined;
-                    responseBody.response.outputSpeech.text = 'Shipping is available for : ' + cityName + '. Address Change request' +
+                    responseBody.response.outputSpeech.text = 'Shipping is available for city ' + cityName + '. Address Change request' +
                         ' has been created. Your ticket number is :' + data['id'];
                     res.send(responseBody);
                 });
@@ -212,7 +215,7 @@ function getCityName(pincode) {
     var options = {
         url: 'https://api.pitneybowes.com/identify/identifyaddress/v1/rest/getcitystateprovince/results.json',
         headers: {
-            'Authorization': 'Bearer V14iDm4KXlch4cu04V8GtsVCU49w',
+            'Authorization': 'Bearer '+PB_TOKEN,
             'Content-Type': 'application/json'
         },
         body: '{  \n' +
@@ -225,7 +228,7 @@ function getCityName(pincode) {
         '   "Input":{  \n' +
         '      "Row":[  \n' +
         '         {  \n' +
-        '            "PostalCode":"11368"\n' +
+        '            "PostalCode":"'+pincode+'"\n' +
         '         }\n' +
         '      ]}}'
     };
