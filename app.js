@@ -305,7 +305,7 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
             } else if(intent.value === 'greeting'){
                 sendTextMessage('@'+tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
             } else if(intent.value === 'ticketstatus'){
-                getTicketStatus('@'+tweet.user.screen_name, 23);
+                getTicketStatus('@'+tweet.user.screen_name, data.entities.number[0].value);
             }
         } else {
             sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
