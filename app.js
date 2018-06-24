@@ -165,13 +165,13 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
                 });
             } else {
                 responseBody.response.outputSpeech.text = 'Sorry. Shipping is not available for this pincode.'
-                newTicketCustomerId === undefined
+                newTicketCustomerId = undefined
                 res.send(responseBody);
             }
         });
 
     } else {
-        newTicketCustomerId === undefined
+        newTicketCustomerId = undefined
         res.send(responseBody);
     }
 });
