@@ -295,16 +295,17 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
         console.log(tweet.text);
 
         const client = new Wit({accessToken: '3AFY5YHPBPCRZFIZ7RCNVKYYJ7A3T7NZ'});
-        client.message(tweet.text, {}).then((data) = > {
-        console.log('Yay, got Wit.ai response: ' + JSON.stringify(data));
+        client.message(tweet.text, {})
+            .then((data) => {
+                console.log('Yay, got Wit.ai response: ' + JSON.stringify(data));
         const intent = firstIntent(data);
-        if (intent && intent.confidence > 0.5) {
-            if (intent.value === 'newticket') {
-                createNewTicket('@' + tweet.user.screen_name, tweet.text);
-            } else if (intent.value === 'greeting') {
-                sendTextMessage('@' + tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
-            } else if (intent.value === 'ticketstatus') {
-                getTicketStatus('@' + tweet.user.screen_name, 23);
+        if (intent &&  intent.confidence > 0.5 ){
+            if(intent.value === 'newticket'){
+                createNewTicket('@'+tweet.user.screen_name, tweet.text);
+            } else if(intent.value === 'greeting'){
+                sendTextMessage('@'+tweet.user.screen_name, 'Hi there! \nHow may I help you today?');
+            } else if(intent.value === 'ticketstatus'){
+                getTicketStatus('@'+tweet.user.screen_name, 23);
             }
         } else {
             sendTextMessage(sender, "Text received, echo: " + message.text.substring(0, 200))
