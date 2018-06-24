@@ -7,9 +7,9 @@ const
     app = express().use(bodyParser.json()),
     fd = require('freshdesk-api')
 
-const
+/*const
     Twitter = require('./twitter-bot'),
-    {Wit, log} = require('node-wit');
+    {Wit, log} = require('node-wit');*/
 
 const
     request = require('request'),
@@ -61,7 +61,7 @@ app.post('/alexa-webhook', function (req, res) {
         }
 
         Freshdesk.getTicket(ticketNum, function(err, data, extra){
-            console.log("Ticket with ID 5 : " + util.inspect(data, false, null));
+            //console.log("Ticket with ID : " + util.inspect(data, false, null));
             if(err){
                 console.log(err);
             };
@@ -82,7 +82,7 @@ app.post('/alexa-webhook', function (req, res) {
 });
 
 app.post('/alexa-webhook-create-intent', function (req, res) {
-    //console.log(util.inspect(req.body, false, null));
+    console.log(util.inspect(req.body, false, null));
     console.log('request type : ' + req.body.request.type + ' and request id is : ' + req.body.request.requestId);
     let responseBody = {
         'version': '1.0',
@@ -290,7 +290,7 @@ function sendFacebookMessage(sender, text) {
     })
 }
 
-Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
+/*Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('data', function(tweet) {
         console.log(tweet.text);
 
@@ -317,4 +317,4 @@ Twitter.stream('statuses/filter', {track: '#Tipdia'}, function(stream) {
     stream.on('error', function(error) {
         console.log(error);
     });
-});
+});*/
