@@ -5,7 +5,8 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json()),
-    fd = require('freshdesk-api')
+    fd = require('freshdesk-api'),
+    request = require('request-promise');
 
 /*const
     Twitter = require('./twitter-bot'),
@@ -105,27 +106,68 @@ app.post('/alexa-webhook-create-intent', function (req, res) {
         newTicketCustomerId = req.body.request.intent.slots.customerid.value
         responseBody.response.outputSpeech.text = 'What kind of ticket you want to create? Refund or Address Change?';
         res.send(responseBody);
-    } else if(req.body.request.intent && req.body.request.intent.slots){
+    } else if(req.body.request.intent && req.body.request.intent.name == 'newticket' && req.body.request.intent.slots){
         var ticketType = req.body.request.intent.slots.ticket_description.value;
 
-        let newTicket = {
-            'name': newTicketCustomerId,
-            'email': newTicketCustomerId+'@gmail.com',
-            'subject': 'Issue reported by Alexa User',
-            'description': 'Process ' + ticketType + ' request',
-            'status': 2,
-            'priority': 1
+        if(ticketType == 'address change'){
+            responseBody.response.outputSpeech.text = 'Please provide your Pincode for the new address.';
+            responseBody.response.shouldEndSession = false;
+            res.send(responseBody);
+        } else {
+            let newTicket = {
+                'name': newTicketCustomerId,
+                'email': newTicketCustomerId + '@gmail.com',
+                'subject': 'Issue reported by Alexa User',
+                'description': 'Process refund request',
+                'status': 2,
+                'priority': 1
+            }
+
+            Freshdesk.createTicket(newTicket, function(err, data){
+                if(err){
+                    console.log(err);
+                };
+                console.log(util.inspect(data, false, null));
+                newTicketCustomerId = undefined;
+                responseBody.response.outputSpeech.text = 'Refund request initiated. Your reference ticket number is : ' +
+                    '' + data['id'];
+                res.send(responseBody);
+            });
         }
 
-        Freshdesk.createTicket(newTicket, function(err, data){
-            if(err){
-                console.log(err);
-            };
-            console.log(util.inspect(data, false, null));
-            newTicketCustomerId = undefined;
-            responseBody.response.outputSpeech.text = 'Your ticket number is : ' + data['id'];
-            res.send(responseBody);
+    } else if(req.body.request.intent && req.body.request.intent.name == 'pincode' && req.body.request.intent.slots){
+        var pincode = req.body.request.intent.slots.pincode.value;
+        getCityName(pincode).then(function (body) {
+            var info = JSON.parse(body);
+            var cityName = info.Output[0].City;
+            console.log('city name is : ' + cityName);
+            if(cityName !== undefined){
+                let newTicket = {
+                    'name': newTicketCustomerId,
+                    'email': newTicketCustomerId + '@gmail.com',
+                    'subject': 'Issue reported by Alexa User',
+                    'description': 'Process address change request to city : ' + cityName,
+                    'status': 2,
+                    'priority': 1
+                }
+
+                Freshdesk.createTicket(newTicket, function(err, data){
+                    if(err){
+                        console.log(err);
+                    };
+                    console.log(util.inspect(data, false, null));
+                    newTicketCustomerId = undefined;
+                    responseBody.response.outputSpeech.text = 'Shipping is available for : ' + City + '. Address Change request' +
+                        ' has been created. Your ticket number is :' + data['id'];
+                    res.send(responseBody);
+                });
+            } else {
+                responseBody.response.outputSpeech.text = 'Sorry. Shipping is not available for this pincode.'
+                res.send(responseBody);
+            }
         });
+
+
     } else {
         res.send(responseBody);
     }
@@ -165,6 +207,31 @@ app.post('/webhook', function (req, res) {
     }
     res.sendStatus(200);
 });
+
+function getCityName(pincode) {
+    var options = {
+        url: 'https://api.pitneybowes.com/identify/identifyaddress/v1/rest/getcitystateprovince/results.json',
+        headers: {
+            'Authorization': 'Bearer V14iDm4KXlch4cu04V8GtsVCU49w',
+            'Content-Type': 'application/json'
+        },
+        body: '{  \n' +
+        '   "options":{  \n' +
+        '      "PerformUSProcessing":"Y",\n' +
+        '      "PerformCanadianProcessing":"Y",\n' +
+        '      "OutputVanityCity":"Y",\n' +
+        '      "MaximumResults":"10"\n' +
+        '   },\n' +
+        '   "Input":{  \n' +
+        '      "Row":[  \n' +
+        '         {  \n' +
+        '            "PostalCode":"11368"\n' +
+        '         }\n' +
+        '      ]}}'
+    };
+
+    return request.post(options);
+}
 
 function firstEntity(nlp, name) {
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];

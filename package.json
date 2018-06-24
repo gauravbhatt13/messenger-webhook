@@ -15,6 +15,7 @@
     "freshdesk-api": "^2.5.0",
     "node-wit": "^5.0.0",
     "request": "^2.87.0",
+    "request-promise": "^4.2.2",
     "twitter": "^1.7.1",
     "wit-ai": "^4.1.2"
   }
